@@ -2,6 +2,8 @@
 
 [`eslint-plugin-import`](https://www.npmjs.com/package/eslint-plugin-import) eslint-plugin-import resolution plugin for files named as their containers.
 
+This package you can find there [`eslint-import-resolver-directory-named`](https://www.npmjs.com/package/eslint-import-resolver-directory-named)
+
 This package resolve import like this:
 ```
 	import Button from "@/components/Button"
