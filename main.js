@@ -23,7 +23,7 @@ exports.resolve = (modulePath, sourceFile, config = {}) => {
 	// Replace modulePath with defined alias
 	
 	aliasesArray.forEach(([alias, value]) => {
-		if (modulePath.startsWith(alias)) {
+		if (modulePath.startsWith(`${alias}/`)) {
 			resolvePath = resolvePath.replace(alias, value)
 		}
 	})
