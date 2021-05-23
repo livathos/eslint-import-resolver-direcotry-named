@@ -17,23 +17,23 @@ exports.resolve = (modulePath, sourceFile, config = {}) => {
 
 	if (modulePath[0] === '.') {
 		resolvePath = path.resolve(sourceDir, modulePath);
-		return findModulePath(resolvePath, null, extensions);
+		return findModulePath(resolvePath, extensions);
 	}
 
 	// Replace modulePath with defined alias
 	
 	aliasesArray.forEach(([alias, value]) => {
-		if (modulePath.startsWith(alias)) {
+		if (modulePath.startsWith(`${alias}/`)) {
 			resolvePath = resolvePath.replace(alias, value)
+		} else if (modulePath === alias) {
+			resolvePath = value
 		}
 	})
 
 	if (resolvePath[0] === '.') {
 		resolvePath = path.resolve(process.cwd(), resolvePath);
-		return findModulePath(resolvePath, null, extensions);
+		return findModulePath(resolvePath, extensions);
 	}
-
-	// TODO: resolve node_modules lookup paths
 
 	return {
 		found: false,
@@ -42,30 +42,26 @@ exports.resolve = (modulePath, sourceFile, config = {}) => {
 };
 
 
-function findModulePath(resolvePath, paths, extArray) {
+function findModulePath(resolvePath, extArray) {
 	const basename = path.basename(resolvePath)
-	let missingExtension = findMissingExtension(resolvePath, extArray)
-	let resultPath = resolvePath + missingExtension
-	let resultPathExist = fs.existsSync(resultPath)
-	let resultPathIsNotDirecotry = resultPathExist && !fs.lstatSync(resultPath).isDirectory()
+	const lookInPaths = Object.entries({
+		default: resolvePath,
+		directedName: `${resolvePath}/${basename}`,
+		index: `${resolvePath}/index`
+	})
+	const result = lookInPaths.reduce((targetPath, [pathType, value]) => {
+		const missingExtension = findMissingExtension(value, extArray)
+		const resultPath = value + missingExtension
+		const resultPathExist = fs.existsSync(resultPath)
+		const resultPathIsNotDirecotry = resultPathExist && !fs.lstatSync(resultPath).isDirectory()
 
-	if (resultPathExist && resultPathIsNotDirecotry) {
-		return {
-			found: true,
-			path: resultPath
-		};
-	}
-
-	// Look for a path where the file name is exactly the same as the basename
-
-	resultPath = `${resolvePath}/${basename}`
-	missingExtension = findMissingExtension(resultPath, extArray)
-	resultPath += missingExtension
-	resultPathExist = fs.existsSync(resultPath)
-
+		if (resultPathExist && resultPathIsNotDirecotry) return resultPath
+		return targetPath
+	}, false)
+	
 	return {
-		found: resultPathExist,
-		path: resultPathExist ? resultPath : null
+		found: result === false ? false : true,
+		path: result === false ? null : result
 	};
 }
 

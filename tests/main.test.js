@@ -3,6 +3,7 @@ const resolver = require('../main')
 
 const pathToExampleButton = path.resolve('./tests/example/button/button.js')
 const pathToExampleInput = path.resolve('./tests/example/Input/Input.vue')
+const pathToExampleIcon = path.resolve('./tests/example/icon/index.js')
 const exampleConfig = {
 	aliases: {
 		'@alias': './tests/example'
@@ -11,10 +12,22 @@ const exampleConfig = {
 const vueConfig = {
 	extensions: ['.js', '.vue'],
 	aliases: {
-		'@alias': './random',
+		'@alias': './tests',
 		'@': './tests/example'
 	}
 }
+const otherConfig = {
+	aliases: {
+		'@': './tests/example',
+		'@alias': './tests'
+	}
+}
+const directConfig = {
+	aliases: {
+		'@': './tests/example/icon'
+	}
+}
+
 const tests = [
 	{
 		description: 'resolves relative directory',
@@ -28,6 +41,10 @@ const tests = [
 		description: 'resolves alias directory',
 		path: '@alias/button/button.js',
 		config: exampleConfig
+	},
+	{
+		description: 'resolves alias directory without extension',
+		path: '@alias/button/button'
 	},
 	{
 		description: 'resolves alias directory without extension',
@@ -49,6 +66,24 @@ const tests = [
 		config: vueConfig,
 		target: pathToExampleInput
 	},
+	{
+		description: 'resolves index directory',
+		path: './example/icon',
+		config: otherConfig,
+		target: pathToExampleIcon
+	},
+	{
+		description: 'resolves index directory with alias',
+		path: '@/icon',
+		config: otherConfig,
+		target: pathToExampleIcon
+	},
+	{
+		description: 'resolves alias with direct index file',
+		path: '@',
+		config: directConfig,
+		target: pathToExampleIcon
+	}
 ]
 
 describe('resolver', function() {
@@ -61,7 +96,7 @@ describe('resolver', function() {
 		})
 	})
 
-	it('resolves directory which not exist', function() {
+	it('resolves directory whose not exist', function() {
 		expect(resolver.resolve('./example/button/notfound', module.filename)).toEqual({
 			found: false,
 			path: null
