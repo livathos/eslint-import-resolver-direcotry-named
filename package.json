@@ -1,5 +1,5 @@
 {
-  "name": "@livathos/eslint-import-resolver-directory-named",
+  "name": "eslint-import-resolver-directory-named",
   "version": "1.0.0",
   "description": "eslint-plugin-import resolution plugin for files named as their containers with alias support",
   "main": "main.js",
@@ -18,11 +18,11 @@
     "eslint-import"
   ],
   "publishConfig": {
-	  "access": "public"
-	},
-	"jest": {
-	  "testURL": "http://localhost/"
-	},
+    "access": "public"
+  },
+  "jest": {
+    "testURL": "http://localhost/"
+  },
   "author": "Adrian Kazimierski",
   "license": "ISC",
   "bugs": {

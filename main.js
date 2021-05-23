@@ -20,6 +20,8 @@ exports.resolve = (modulePath, sourceFile, config = {}) => {
 		return findModulePath(resolvePath, null, extensions);
 	}
 
+	// Replace modulePath with defined alias
+	
 	aliasesArray.forEach(([alias, value]) => {
 		if (modulePath.startsWith(alias)) {
 			resolvePath = resolvePath.replace(alias, value)
@@ -55,7 +57,7 @@ function findModulePath(resolvePath, paths, extArray) {
 	}
 
 	// Look for a path where the file name is exactly the same as the basename
-	
+
 	resultPath = `${resolvePath}/${basename}`
 	missingExtension = findMissingExtension(resultPath, extArray)
 	resultPath += missingExtension
